@@ -63,7 +63,7 @@ class ReactivePlannerController(PlannerControllerBase):
         for item in Aisle:
             best_aisle_path_cost = self.planPathToGoalViaAisle(startCellCoords, goalCellCoords, best_aisle).travelCost
             aisle_path_cost = self.planPathToGoalViaAisle(startCellCoords, goalCellCoords, item).travelCost
-            if item.name == 'B': aisle_path_cost += self.expectedWaitTime
+            if item.name == 'B': aisle_path_cost += self.expectedWaitTime * self.waitCost
             print('######################### Path cost of '+item.name+' is {}'.format(aisle_path_cost))
             if aisle_path_cost <= best_aisle_path_cost:
                 best_aisle = item
