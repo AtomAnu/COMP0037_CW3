@@ -45,7 +45,16 @@ class ReactivePlannerController(PlannerControllerBase):
     # Choose the first aisle the robot will initially drive down.
     # This is based on the prior.
     def chooseInitialAisle(self, startCellCoords, goalCellCoords):
-        return Aisle.A
+        best_aisle = Aisle.A
+        for item in Aisle:
+            best_aisle_path_cost = self.planPathToGoalViaAisle(startCellCoords, goalCellCoords, best_aisle).travelCost
+            aisle_path_cost = self.planPathToGoalViaAisle(startCellCoords, goalCellCoords, item).travelCost
+            if item.name = 'B': aisle_path_cost += waiting_time*0.8 
+            print('Path cost of '+item.name+' is {}'.format(aisle_path_cost))
+            if aisle_path_cost <= best_aisle_path_cost:
+                best_aisle = item
+            
+        return best_aisle
 
     # Choose the subdquent aisle the robot will drive down
     def chooseAisle(self, startCellCoords, goalCellCoords):

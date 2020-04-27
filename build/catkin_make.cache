@@ -1,0 +1,2 @@
+comp0037_cw3:comp0037_example:comp0037_launch:comp0037_mapper:comp0037_obstacler:comp0037_reactive_planner_controller:comp0037_resources:comp0037_the_boss:comp0037_time_server:stdr_simulator/stdr_gui:stdr_simulator/stdr_launchers:stdr_simulator/stdr_msgs:stdr_simulator/stdr_parser:stdr_simulator/stdr_resources:stdr_simulator/stdr_robot:stdr_simulator/stdr_samples:stdr_simulator/stdr_server
+-DCATKIN_DEVEL_PREFIX=/home/ros_user/COMP0037_CW3/devel -DCMAKE_INSTALL_PREFIX=/home/ros_user/COMP0037_CW3/install -G Unix Makefiles

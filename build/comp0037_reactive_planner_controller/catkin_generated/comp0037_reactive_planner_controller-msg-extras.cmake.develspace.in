@@ -1,0 +1,2 @@
+set(comp0037_reactive_planner_controller_MESSAGE_FILES "")
+set(comp0037_reactive_planner_controller_SERVICE_FILES "/home/ros_user/COMP0037_CW3/src/comp0037_reactive_planner_controller/srv/Goal.srv")
