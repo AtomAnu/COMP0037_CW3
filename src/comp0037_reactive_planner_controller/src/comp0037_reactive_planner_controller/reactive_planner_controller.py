@@ -1,5 +1,6 @@
 # This class manages the key logic for the reactive planner and
 # controller. This monitors the the robot motion.
+from __future__ import division
 
 import rospy
 import threading
@@ -16,7 +17,16 @@ class ReactivePlannerController(PlannerControllerBase):
         self.mapUpdateSubscriber = rospy.Subscriber('updated_map', MapUpdate, self.mapUpdateCallback)
         self.gridUpdateLock =  threading.Condition()
         self.aisleToDriveDown = None
-        self.waitTime = -2
+        self.lambda_B = 1/90
+
+        #for Part 2 Q1 and Q2, use:
+        #self.obstacle_B_prob = 1
+
+        #for Part 2 Q3, use:
+        self.obstacle_B_prob = 0.8
+        self.expectedWaitTime = self.obstacle_B_prob / self.lambda_B
+        #L_W
+        self.waitCost = 2
 
     def mapUpdateCallback(self, mapUpdateMessage):
 
@@ -53,11 +63,12 @@ class ReactivePlannerController(PlannerControllerBase):
         for item in Aisle:
             best_aisle_path_cost = self.planPathToGoalViaAisle(startCellCoords, goalCellCoords, best_aisle).travelCost
             aisle_path_cost = self.planPathToGoalViaAisle(startCellCoords, goalCellCoords, item).travelCost
-            if item.name = 'B': aisle_path_cost += waiting_time*0.8 
-            print('Path cost of '+item.name+' is {}'.format(aisle_path_cost))
+            if item.name == 'B': aisle_path_cost += self.expectedWaitTime
+            print('######################### Path cost of '+item.name+' is {}'.format(aisle_path_cost))
             if aisle_path_cost <= best_aisle_path_cost:
                 best_aisle = item
-            
+        
+        print('######################### The best aisle to drive is Aisle: {}'.format(best_aisle.name))
         return best_aisle
 
     # Choose the subdquent aisle the robot will drive down
@@ -81,8 +92,9 @@ class ReactivePlannerController(PlannerControllerBase):
         for i in range(currentWaypointIndex, len(self.currentPlannedPath.waypoints)-1):
             costRemained += self.planner.computeLStageAdditiveCost(self.currentPlannedPath.waypoints[i], self.currentPlannedPath.waypoints[i+1])
         
-        costRemained += self.waitTime * 2
-        print "Cost remained is: " + str(costRemained)
+        # + TL_W
+        costRemained += self.expectedWaitTime * self.waitCost
+        print "######################### Cost remained is: " + str(costRemained)
 
         # Replan the path on other four aisles and choose the one with the lowest cost.
         costReplan = []
@@ -98,8 +110,8 @@ class ReactivePlannerController(PlannerControllerBase):
         chosenAisle = aisleReplan[chosenIndex]
         chosenPathCost = min(costReplan)
 
-        print "Cost replan is: " + str(chosenPathCost)
-        print "Aisle replan is: " + str(chosenAisle)
+        print "######################### Cost replan is: " + str(chosenPathCost)
+        print "######################### Aisle replan is: " + str(chosenAisle)
 
         if chosenPathCost > costRemained:
             return True
@@ -193,7 +205,7 @@ class ReactivePlannerController(PlannerControllerBase):
         self.planner.searchGridDrawer.drawPathGraphicsWithCustomColour(currentPlannedPath, 'yellow')
         self.planner.searchGridDrawer.waitForKeyPress()
 
-        print "Combined path travel cost = " + str(currentPlannedPath.travelCost)
+        print "######################### Combined path travel cost = " + str(currentPlannedPath.travelCost)
 
         return currentPlannedPath
 
@@ -223,7 +235,7 @@ class ReactivePlannerController(PlannerControllerBase):
             # if the robot waited and used its existing path. This is more robust than, say,
             # stripping cells from the existing path.           
             
-            print 'Planning a new path: start=' + str(start) + '; goal=' + str(goal)
+            print '######################### Planning a new path: start=' + str(start) + '; goal=' + str(goal)
             
             # Plan a path using the current occupancy grid
             self.gridUpdateLock.acquire()
