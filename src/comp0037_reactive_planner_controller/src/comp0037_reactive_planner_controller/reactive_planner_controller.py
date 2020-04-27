@@ -90,7 +90,8 @@ class ReactivePlannerController(PlannerControllerBase):
         
         # Calculate the cost remained
         for i in range(currentWaypointIndex, len(self.currentPlannedPath.waypoints)-1):
-            costRemained += self.planner.computeLStageAdditiveCost(self.currentPlannedPath.waypoints[i], self.currentPlannedPath.waypoints[i+1])
+            costRemained += self.planner.computeLStageAdditiveCost(self.currentPlannedPath.waypoints[i], \
+                                                                   self.currentPlannedPath.waypoints[i+1])
         
         # + TL_W
         costRemained += self.expectedWaitTime * self.waitCost
